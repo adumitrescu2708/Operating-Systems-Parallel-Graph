@@ -1,0 +1,32 @@
+@name:    Dumitrescu Alexandra
+@group:   333CA
+@since:   April 2023
+@for:     Operating Systems Parallel Graph
+
+1. Brief notes on the implementations
+
+| For solving the problem of computing the sum of the nodes in the
+| graph, I used 2 states possible for the nodes: **visited** meaning
+| the node's task has been added to the queue, but wasn't yet solved,
+| and **processed** meaning the task was solved and the node was added
+| to the sum.
+|
+| For treating the cases in which the graph had multiple connected
+| components I simply added an iteration through all the nodes and once
+| an unvisited node occurs we add the task to the queue. This, of course
+| results in the MAX_TASK parameter needed to be increased to 1000.
+|
+| For synchronizing, I used the threadpool's lock to make sure that only
+| one thread modifies the queue at a time, and also 2 semaphores, for
+| reducing the necessity of busy waiting in the threadloop function and
+| in the add_task_to_queue method. In this way, when wanting to extract
+| one task from the queue, the worker would wait for the semaphore to
+| announce, otherwise it is blocked. Similarly, when wanting to add
+| a task in the queue, in order to maintain the number of current tasks
+| lower than the given limit, the calling thread would be blocked
+| until the semaphore is released.
+|
+| For more details, see comments in the threadpool.c file.
+
+2. Inspirations
+| https://nachtimwald.com/2019/04/12/thread-pool-in-c/
